@@ -1,0 +1,7 @@
+#conversation {
+    height:200px; 
+    border: 1px solid #CCCCCC; 
+    padding: 12px;  
+    border-radius: 5px; 
+    overflow-x: hidden;
+}

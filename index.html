@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="css/chat.css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			registradorMensajes();
+			$.ajaxSetup({"cache": false});
+			setInterval("cargadorMensajes()", 250);
+		});
+
+		/*
+		* Función que recoge los datos del formulario del chat
+		* y los envía al servidor php para registrar los datos enviados
+		*/
+		function registradorMensajes() {
+			$("#send").click(function(e) {
+				e.preventDefault();
+				var datosFormulario = $("#formChat").serialize();
+				console.log(datosFormulario)
+				$.ajax( {
+					type: "POST",
+					url: "control/controlador.php?accion=registrarMensaje",
+					data: datosFormulario
+				}).done(function(info) {
+					console.log(info); //muestra por consola el mensaje del servidor de mensaje registrado
+				});
+			});
+		}
+
+		/*
+		* Funcion que recoge los datos de la base de datos del chat 
+		* muestra los mensajes de los usuarios
+		*/
+		function cargadorMensajes() {
+			var accion = "recarga";
+			$.ajax({
+				type: "POST",
+				url: "control/controlador.php?accion=recargaMensajes",
+			}).done(function(info) {
+				$("#conversation").html(info);
+				$("#conversation  p:last-child").css({
+					"background-color" : "lightblue",
+					"padding-botton" : "20px"
+				});
+			})
+		}
+	</script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<section style="padding: 15%;">
+			<div class="row">
+				<h1 class="text-center">Chat</h1>
+				<hr>
+			</div>
+			<div class="row">
+				<form id="formChat" role="form">
+					<div class="form-group">
+						<label for="user">User</label>
+						<input type="text" class="form-control" id="user" name="user" placeholder="Enter User">
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-12">
+								<div id="conversation">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="message">Message</label>
+						<textarea id="message" name="message" placeholder="Enter Message" class="form-control" rows="3" maxlength="128"></textarea>
+					</div>
+					<button id="send" class="btn btn-primary">Send</button>
+				</form>
+			</div>
+		</section>
+	</div>
+</body>
+
+</html>
